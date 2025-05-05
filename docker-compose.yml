@@ -1,34 +1,50 @@
 version: '3.8'
+
 services:
   server:
     build:
       context: .
-      dockerfile: apps/server/Dockerfile
+      target: dev
+    container_name: review-management-server
     ports:
-      - "3000:3000"
+      - '3000:3000'
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
     env_file:
-      - apps/server/.env
+      - .env
     depends_on:
       - postgres
+    command: >
+      sh -c "
+        until nc -z postgres 5432;
+        do echo '⏳ Waiting for PostgreSQL...'; sleep 1; done;
+        echo '✅ PostgreSQL is up';
+        tsnd --respawn --transpile-only --ignore-watch node_modules src/main.ts
+      "
 
   client:
     build:
       context: .
-      dockerfile: apps/client/Dockerfile
+      target: dev
+      dockerfile: client/Dockerfile
+    container_name: review-management-client
     ports:
-      - "5173:4173"
+      - '5173:5173'
+    environment:
+      - NODE_ENV=development
     depends_on:
       - server
 
   postgres:
-    image: postgres:15
+    image: postgres:16
     restart: always
     ports:  
       - "5432:5432"
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: 123456
-      POSTGRES_DB: review-management
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     volumes:
       - pgdata:/var/lib/postgresql/data
 
