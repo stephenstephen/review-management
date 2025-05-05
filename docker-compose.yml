@@ -3,21 +3,22 @@ version: '3.8'
 services:
   server:
     build:
-      context: .
+      context: ./server
+      dockerfile: Dockerfile
       target: dev
     container_name: review-management-server
     ports:
       - '3000:3000'
     environment:
       - NODE_ENV=development
-      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@postgres:${DB_PORT}/${DB_NAME}
     env_file:
       - .env
     depends_on:
       - postgres
     command: >
       sh -c "
-        until nc -z postgres 5432;
+        until nc -z postgres ${DB_PORT};
         do echo '⏳ Waiting for PostgreSQL...'; sleep 1; done;
         echo '✅ PostgreSQL is up';
         tsnd --respawn --transpile-only --ignore-watch node_modules src/main.ts
@@ -25,9 +26,9 @@ services:
 
   client:
     build:
-      context: .
+      context: ./client
       target: dev
-      dockerfile: client/Dockerfile
+      dockerfile: Dockerfile
     container_name: review-management-client
     ports:
       - '5173:5173'
@@ -40,7 +41,7 @@ services:
     image: postgres:16
     restart: always
     ports:  
-      - "5432:5432"
+      - "${DB_PORT}:${DB_PORT}"
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
