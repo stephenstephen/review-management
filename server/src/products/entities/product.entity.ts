@@ -25,7 +25,6 @@ export class Product {
   @Column({ nullable: true })
   image?: string;
 
-  @Field(() => [Review], { nullable: true })
   @OneToMany(() => Review, (review) => review.product)
   reviews?: Review[];
 

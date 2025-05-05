@@ -3,7 +3,7 @@ import { Product } from '../../products/entities/product.entity';
 import { Min, Max, Length } from 'class-validator';
 import { CreateDateColumn } from 'typeorm';
 
-@Entity()
+@Entity('reviews')
 export class Review {
   @PrimaryGeneratedColumn()
   id: number;
