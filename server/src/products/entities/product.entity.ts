@@ -28,6 +28,12 @@ export class Product {
   @OneToMany(() => Review, (review) => review.product)
   reviews?: Review[];
 
+  @Field(() => Number, { nullable: true })
+  averageRating?: number;
+
+  @Field(() => Number, { nullable: true })
+  reviewsCount?: number;
+
   @Field()
   @CreateDateColumn()
   createdAt: Date;

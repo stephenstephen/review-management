@@ -10,7 +10,7 @@ import { Product } from '../products/entities/product.entity';
 export class ReviewsService {
   constructor(
     @InjectRepository(Review)
-    private readonly reviewRepo: Repository<Review>,
+    private readonly reviewRepository: Repository<Review>,
 
     @InjectRepository(Product)
     private readonly productRepo: Repository<Product>
@@ -20,12 +20,12 @@ export class ReviewsService {
     const product = await this.productRepo.findOne({ where: { id: dto.productId } });
     if (!product) throw new NotFoundException('Product not found');
 
-    const review = this.reviewRepo.create({ ...dto, product });
-    return this.reviewRepo.save(review);
+    const review = this.reviewRepository.create({ ...dto, product });
+    return this.reviewRepository.save(review);
   }
 
   findAll(productId?: number): Promise<Review[]> {
-    return this.reviewRepo.find({
+    return this.reviewRepository.find({
       where: productId ? { product: { id: productId } } : {},
       relations: ['product'],
       order: { createdAt: 'DESC' },
@@ -33,7 +33,7 @@ export class ReviewsService {
   }
 
   async findOne(id: number): Promise<Review> {
-    const review = await this.reviewRepo.findOne({ where: { id }, relations: ['product'] });
+    const review = await this.reviewRepository.findOne({ where: { id }, relations: ['product'] });
     if (!review) throw new NotFoundException('Review not found');
     return review;
   }
@@ -41,11 +41,18 @@ export class ReviewsService {
   async update(id: number, dto: UpdateReviewDto): Promise<Review> {
     const review = await this.findOne(id);
     Object.assign(review, dto);
-    return this.reviewRepo.save(review);
+    return this.reviewRepository.save(review);
   }
 
   async remove(id: number): Promise<void> {
-    const result = await this.reviewRepo.delete(id);
+    const result = await this.reviewRepository.delete(id);
     if (result.affected === 0) throw new NotFoundException('Review not found');
+  }
+
+  async findByProductId(productId: number): Promise<Review[]> {
+    return this.reviewRepository.find({
+      where: { product: { id: productId } },
+      order: { createdAt: 'DESC' },
+    });
   }
 }
