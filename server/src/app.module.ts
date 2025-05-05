@@ -8,6 +8,10 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { Module } from '@nestjs/common';
 import { typeOrmConfigAsync } from './config/typeorm.config';
+import { ProductsModule } from './products/products.module';
+import { ReviewsModule } from './reviews/reviews.module';
+import { UploadsModule } from './uploads/uploads.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
   imports: [
@@ -20,8 +24,15 @@ import { typeOrmConfigAsync } from './config/typeorm.config';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       playground: true,
     }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'),
+      serveRoot: '/uploads',
+    }),
     UsersModule,
-    AuthModule
+    AuthModule,
+    ProductsModule,
+    ReviewsModule,
+    UploadsModule
   ]
 })
 export class AppModule {}

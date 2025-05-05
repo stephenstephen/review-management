@@ -13,6 +13,7 @@ ENV CI=true
 RUN npm install -g pnpm
 
 COPY package.json pnpm-lock.yaml ./
+COPY nginx.conf /etc/nginx/nginx.conf
 RUN pnpm install
 
 ################################################################################
