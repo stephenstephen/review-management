@@ -5,13 +5,15 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import * as yup from "yup";
 import { useMutation } from "@tanstack/react-query";
-import { loginRequest } from "@/services/auth.service";
+import { loginRequest } from "@/features/auth/services/auth.service";
 import { useNavigate } from "react-router-dom";
 import { loginSchema } from "@/types/validations/login.schema";
+import { useAuth } from "../context/AuthContext";
 
 type LoginFormData = yup.InferType<typeof loginSchema>;
 
-export default function LoginPage() {
+const LoginPage = () => {
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>({
@@ -20,7 +22,10 @@ export default function LoginPage() {
 
   const mutation = useMutation({
     mutationFn: loginRequest,
-    onSuccess: () => navigate("/dashboard"),
+    onSuccess: (data) => {
+      login(data.access_token as string);
+      navigate("/dashboard");
+    },
   });
 
   const onSubmit = (data: LoginFormData) => {
@@ -50,3 +55,5 @@ export default function LoginPage() {
     </div>
   );
 }
+
+export default LoginPage;

@@ -7,12 +7,12 @@ type Props = {
   children: React.ReactNode
 }
 
-export function ProtectedRoute({ children }: Props) {
+export const ProtectedRoute = ({ children }: Props) => {
   const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const token = localStorage.getItem("token")
+    const token = localStorage.getItem("authToken")
     if (!token) {
       navigate("/login")
     } else {

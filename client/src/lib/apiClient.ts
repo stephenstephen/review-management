@@ -6,7 +6,7 @@ declare module 'axios' {
   }
 }
 
-const api: AxiosInstance = axios.create({
+const apiClient: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   headers: {
     'Content-Type': 'application/json',
@@ -16,7 +16,7 @@ const api: AxiosInstance = axios.create({
 });
 
 
-api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const token = localStorage.getItem('authToken');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -26,7 +26,7 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 });
 
 
-api.interceptors.response.use(
+apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response) {
@@ -52,4 +52,4 @@ api.interceptors.response.use(
   }
 );
 
-export default api;
+export default apiClient;
