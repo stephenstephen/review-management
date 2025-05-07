@@ -60,7 +60,7 @@ export function TablePagination<TData>({ table }: TablePaginationProps<TData>) {
   };
 
   return (
-    <div className="flex justify-between items-center">
+    <div className="flex justify-between items-center p-2">
       <span className="text-sm text-gray-600">
         Page {currentPage + 1} sur {pageCount}
       </span>

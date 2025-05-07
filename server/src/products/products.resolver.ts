@@ -46,7 +46,7 @@ export class ProductsResolver {
     return this.productsService.update(id, updateProductInput);
   }
 
-  @Mutation(() => Product)
+  @Mutation(() => Boolean)
   @UseGuards(GqlAuthGuard)
   removeProduct(@Args('id', { type: () => Int }) id: number) {
     return this.productsService.remove(id);

@@ -1,11 +1,13 @@
-version: '3.8'
-
 services:
   server:
     build:
       context: ./server
       dockerfile: Dockerfile
       target: dev
+    develop:
+      watch:
+        - action: rebuild
+          path: ./server/Dockerfile
     container_name: review-management-server
     ports:
       - '3000:3000'
@@ -29,6 +31,10 @@ services:
       context: ./client
       target: dev
       dockerfile: Dockerfile
+    develop:
+      watch:
+        - action: rebuild
+          path: ./client/Dockerfile
     container_name: review-management-client
     ports:
       - '5173:5173'

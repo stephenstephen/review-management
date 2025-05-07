@@ -1,11 +1,19 @@
 export interface Product {
-  id: string;
+  id?: string;
   name: string;
   description: string;
   price: number;
-  imageUrl: string;
-  createdAt: string;
-  updatedAt: string;
+  image?: string;
+  averageRating?: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
-export type ProductInput = Omit<Product, 'id' | 'createdAt' | 'updatedAt'>;
+export interface CreateProductInput {
+  name: string;
+  description: string;
+  price: number;
+  image: string;
+}
+
+export interface UpdateProductInput extends Partial<CreateProductInput> {}

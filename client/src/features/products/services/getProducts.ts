@@ -1,25 +1,25 @@
-import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import apiClient from '@/lib/apiClient';
+import { gql } from 'graphql-request';
+import { Product } from '@/features/products/types/product';
 
-export interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  image: string;
-  averageRating: number;
-  createdAt: string;
-  updatedAt: string;
-}
+const PRODUCTS_QUERY = gql`
+  query GetProducts {
+    products {
+      id
+      name
+      description
+      price
+      image
+      averageRating
+      createdAt
+      updatedAt
+    }
+  }
+`;
 
 export const fetchProducts = async (): Promise<Product[]> => {
-  const response = await axios.get<Product[]>('/api/products');
-  return response.data;
-};
-
-export const useProductsQuery = () => {
-  return useQuery({
-    queryKey: ['products'],
-    queryFn: fetchProducts,
+  const response = await apiClient.post<{ data: { products: Product[] } }>('/graphql', {
+    query: PRODUCTS_QUERY
   });
+  return response.data.data.products;
 };

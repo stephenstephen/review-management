@@ -7,8 +7,8 @@ import * as yup from "yup";
 import { useMutation } from "@tanstack/react-query";
 import { loginRequest } from "@/features/auth/services/auth.service";
 import { useNavigate } from "react-router-dom";
-import { loginSchema } from "@/types/validations/login.schema";
 import { useAuth } from "../context/AuthContext";
+import { loginSchema } from "@/features/auth/validations/login.schema";
 
 type LoginFormData = yup.InferType<typeof loginSchema>;
 

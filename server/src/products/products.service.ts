@@ -43,7 +43,7 @@ export class ProductsService {
     return this.productRepository.save(product);
   }
 
-  async remove(id: number): Promise<Product> {
+  async remove(id: number): Promise<boolean> {
     const product = await this.findOne(id);
 
     // Supprime le fichier image s’il existe
@@ -52,7 +52,7 @@ export class ProductsService {
     }
 
     await this.productRepository.remove(product);
-    return product;
+    return true;
   }
 
   private deleteImageFile(filename: string): void {

@@ -1,21 +1,34 @@
-import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { DataTable } from '@/components/table/DataTable';
-import { ProductFormModal } from '@/features/products/components/ProductFormModal';
-import { fetchProducts } from '@/features/products/services/getProducts';
+import { ProductFormModal } from '@/features/products/components/ProductFormModal'; 
 import { productColumns } from '@/features/products/components/ProductColumns';
+import { Product } from '@/features/products/types/product';
+import { useDeleteProduct } from '@/features/products/hooks/useDeleteProduct';
+import { useGetProducts } from '@/features/products/hooks/useGetProducts';
 
 export const ProductsList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['products'],
-    queryFn: fetchProducts,
-  });
+  const deleteProduct = useDeleteProduct();
+  const { data, isLoading, error } = useGetProducts();
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
+
+  const handleEdit = (product: Product) => {
+    setIsModalOpen(true);
+    setSelectedProduct(product);
+  };
+
+  const handleDelete = (productId: string) => {
+    deleteProduct.mutate(productId);
+    setIsModalOpen(false);
+  };
+
+  if (isLoading) return <div>Chargement...</div>;
+  if (error) return <div>Erreur: {error.message}</div>;
 
   return (
     <div className="space-y-4">
@@ -25,12 +38,12 @@ export const ProductsList = () => {
       </div>
 
       <DataTable
-        columns={productColumns}
-        data={data ?? []}
+        columns={productColumns({ onEdit: handleEdit, onDelete: handleDelete })}
+        data={data || []}
         globalFilterPlaceholder="Rechercher un produit..."
       />
 
-      <ProductFormModal mode="create" open={isModalOpen} onClose={handleCloseModal} />
+      <ProductFormModal open={isModalOpen} onClose={handleCloseModal} />
     </div>
   );
 }

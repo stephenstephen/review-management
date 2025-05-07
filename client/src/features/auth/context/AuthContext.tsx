@@ -1,5 +1,6 @@
-import { AuthContextType } from '@/types/auth';
+import { AuthContextType } from '@/features/auth/types/auth';
 import { createContext, ReactNode, useContext, useState } from 'react';
+import { updateGraphQLClientToken } from '@/lib/graphqlClient';
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -9,12 +10,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   });
   
   const login = (token: string) => {
-    localStorage.setItem('authToken', token);
+    updateGraphQLClientToken(token);
     setIsAuthenticated(true);
   };
 
   const logout = () => {
-    localStorage.removeItem('authToken');
+    updateGraphQLClientToken(null);
     setIsAuthenticated(false);
   };
 

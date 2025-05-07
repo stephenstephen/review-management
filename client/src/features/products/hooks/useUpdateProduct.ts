@@ -1,14 +1,20 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { updateProduct } from '@/features/products/services/updateProduct';
-import { ProductInput } from '@/features/products/types/product';
+import { updateProduct } from '../services/updateProduct';
+import { toast } from 'sonner';
+import { UpdateProductInput } from '@/features/products/types/product';
 
-export const useUpdateProduct = () => {
+export function useUpdateProduct(productId: string, onSuccess?: () => void) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: ProductInput }) => updateProduct(id, data),
-    onSuccess: () => {
+    mutationFn: (data: UpdateProductInput) => updateProduct(productId, data),
+    onSuccess: () => {    
+      toast.success('Produit modifié avec succès');
       queryClient.invalidateQueries({ queryKey: ['products'] });
+      onSuccess?.();
+    },
+    onError: () => {
+      toast.error("Erreur lors de la modification du produit");
     },
   });
-};
+}
